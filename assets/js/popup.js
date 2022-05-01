@@ -5,29 +5,6 @@ const lists = document.getElementById( 'notify-list' );
 const KEY = 'notify';
 const DATA = 'timeData';
 
-// function simpleLoop(arrTime, numLoop = 0) {
-//     var yt_player = document.getElementById("movie_player");
-//     var currentTime = yt_player.getCurrentTime();
-//     var startTime =  arrTime[0][0];
-//     var endTime = arrTime[0][1];
-//     if (arrTime.length > numLoop) {
-// 		startTime =  arrTime[numLoop][0];
-// 		endTime = arrTime[numLoop][1];
-//     } else {
-// 		numLoop = 0
-// 	}
-//     var suitableTimeout = endTime - startTime
-//     if (currentTime <= startTime || currentTime > endTime){
-//         yt_player.seekTo(startTime)
-//     } else {
-//         suitableTimeout = endTime - currentTime
-//     }
-//     setTimeout(function () {
-//         numLoop += 1;
-//         simpleLoop(arrTime, numLoop)
-//     }, suitableTimeout * 1000)
-// }
-
 function createDishes(name) {
 	let li = document.createElement("li");
 	li.textContent = name;
@@ -62,7 +39,7 @@ start.addEventListener( 'click', () => {
 		}
 		const params = arr.reduce(
 			(previousValue, currentValue) => {
-				if (previousValue.length > 1) {
+				if (previousValue.length > 0) {
 					var a = previousValue[previousValue.length - 1];
 					if (a.length == 1) {
 						previousValue[previousValue.length - 1][1] = currentValue
@@ -76,35 +53,14 @@ start.addEventListener( 'click', () => {
 			},
 			[]
 		);
-		function modifyDOM(params) {
-			function simpleLoop(arrTime, numLoop = 0) {
-				const yt_player = document.querySelector('.html5-video-player');
-				console.log(yt_player);
-				const currentTime = yt_player.getCurrentTime();
-				let startTime =  arrTime[0][0];
-				let endTime = arrTime[0][1];
-				if (arrTime.length > numLoop) {
-					startTime =  arrTime[numLoop][0];
-					endTime = arrTime[numLoop][1];
-				} else {
-					numLoop = 0
-				}
-				var suitableTimeout = endTime - startTime
-				if (currentTime <= startTime || currentTime > endTime){
-					yt_player.seekTo(startTime)
-				} else {
-					suitableTimeout = endTime - currentTime
-				}
-				setTimeout(function () {
-					numLoop += 1;
-					simpleLoop(arrTime, numLoop)
-				}, suitableTimeout * 1000)
-			}
-			simpleLoop(params)
-		}
-		chrome.tabs.executeScript({
-			code: '(' + modifyDOM + ')(' + params +');'
-		}, results => {});
+		// chrome.tabs.executeScript({
+		// 	code: '(' + modifyDOM + ')(' + params +');'
+		// }, results => {});
+		chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+			chrome.tabs.executeScript(tabs[0].id,{file: '/myScript.js'},()=>{
+				chrome.tabs.sendMessage(tabs[0].id,{myVar:params});
+			});
+		});
 	} );
 } );
 

@@ -19,6 +19,17 @@
 		"128": "/assets/icons/128.png"
 	  }
 	},
+	"content_scripts": [
+		{
+			"matches": ["https://*/*"],
+			"js": ["/assets/js/myScript.js"],
+			"run_at": "document_end",
+        	"all_frames": true
+		}
+	],
+	"web_accessible_resources": [
+        "/assets/js/popup.js", "/assets/js/myScript.js"
+	],
 	"icons": {
 		"48": "/assets/icons/48.png",
 		"128": "/assets/icons/128.png"
